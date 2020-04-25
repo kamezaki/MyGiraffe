@@ -1,27 +1,37 @@
 namespace WebGiraffe
 
-open System
-open System.Collections.Generic
-open System.IO
-open System.Linq
-open System.Threading.Tasks
-open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Hosting
-open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Hosting
-open Microsoft.Extensions.Logging
+open Giraffe
+open Microsoft.AspNetCore.Builder
+open Microsoft.Extensions.DependencyInjection
+
+module routes =
+    let webApp =
+        choose [
+            route "/ping"   >=> text "pong"
+            route "/"       >=> htmlFile "/pages/index.html" ]
+
+module configure =
+    let configureApp (app : IApplicationBuilder) =
+        // Add Giraffe to the ASP.NET Core pipeline
+        app.UseGiraffe routes.webApp
+
+    let configureServices (services : IServiceCollection) =
+        // Add Giraffe dependencies
+        services.AddGiraffe() |> ignore
 
 module Program =
-    let exitCode = 0
-
-    let CreateHostBuilder args =
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(fun webBuilder ->
-                webBuilder.UseStartup<Startup>() |> ignore
-            )
 
     [<EntryPoint>]
-    let main args =
-        CreateHostBuilder(args).Build().Run()
-
-        exitCode
+    let main _ =
+        Host.CreateDefaultBuilder()
+            .ConfigureWebHostDefaults(
+                fun webHostBuilder ->
+                    webHostBuilder
+                        .Configure(configure.configureApp)
+                        .ConfigureServices(configure.configureServices)
+                        |> ignore)
+            .Build()
+            .Run()
+        0
