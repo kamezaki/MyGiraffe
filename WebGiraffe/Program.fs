@@ -9,8 +9,11 @@ open Microsoft.Extensions.DependencyInjection
 module routes =
     let webApp =
         choose [
-            route "/ping"   >=> text "pong"
-            route "/"       >=> htmlFile "/pages/index.html" ]
+            route "/ping"     >=> text "pong"
+            route "/forecast" >=> warbler (fun _ -> Successful.OK (WeatherForecast.randomForecast()))
+            // If none of the routes matched then return a 404
+            RequestErrors.NOT_FOUND "Not Found"
+        ]
 
 module configure =
     let configureApp (app : IApplicationBuilder) =
