@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="WeatherForecast.fs" />
+    <Compile Include="Configure.ts.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

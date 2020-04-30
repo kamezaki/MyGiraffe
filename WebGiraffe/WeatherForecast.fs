@@ -1,7 +1,6 @@
 namespace WebGiraffe
 
 open System
-open Giraffe
 
 module WeatherForecast =
 
